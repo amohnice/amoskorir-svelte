@@ -304,9 +304,10 @@
 		.accordion-item.active .item-content {
 			max-height: 800px;
 			opacity: 1;
-			padding: 10px 20px 25px 20px;
+			padding: 15px 20px 25px 20px;
 			transform: none;
 			transition-delay: 0s;
+			overflow: visible;
 		}
 
 		.content-inner {
@@ -327,7 +328,7 @@
 			font-size: 0.95rem;
 			color: var(--text-color);
 			opacity: 0.7;
-			margin: 0;
+			margin: 8px 0 0 0;
 			line-height: 1.6;
 		}
 	}
