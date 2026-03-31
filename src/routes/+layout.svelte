@@ -2,7 +2,6 @@
 	import './layout.css';
 	import Profile from '$lib/components/Profile.svelte';
 	import GridPattern from '$lib/components/GridPattern.svelte';
-	import Threads from '$lib/components/Threads.svelte';
 	import ScrollIndicator from '$lib/components/ScrollIndicator.svelte';
 	import ChatWidget from '$lib/components/ChatWidget.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
@@ -12,7 +11,6 @@
 	let { children } = $props();
 </script>
 
-<Threads />
 <SplashCursor />
 <GridPattern />
 <Navbar />
