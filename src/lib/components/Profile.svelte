@@ -337,7 +337,7 @@
 	}
 
 	.socials {
-		margin: 4vh 0 !important;
+		margin: 0;
 		display: flex;
 		gap: 1.5rem;
 	}
@@ -383,11 +383,12 @@
 	@media (max-width: 800px) {
 		#profile {
 			width: 100%;
-			padding: 10vh 6vw 6vh;
+			padding: 8vh 6vw;
 			min-height: 100vh !important;
 			text-align: left;
 			position: relative;
-			justify-content: space-between !important;
+			justify-content: center !important;
+			gap: 2rem;
 			backdrop-filter: none;
 			border-right: none;
 			border-bottom: 2px solid var(--glass-border);
