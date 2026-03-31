@@ -4,7 +4,7 @@ export const certificates = [
         issuer: "ALX",
         date: "July 2024",
         location: "Nairobi",
-        href: "/certificates/amos_PLP_certificate.pdf",
+        href: "/certificates/alx_aice_ai_career_essentials_certificate.pdf",
         icon: "fas fa-brain"
     },
     {
@@ -28,7 +28,7 @@ export const certificates = [
         issuer: "Build with AI (Unstacked Labs)",
         date: "Sept 2025 - Dec 2025",
         location: "Nairobi",
-        href: "/certificates/amos_Unstacked%20Labs%20BwAI%20Certificate%20of%20Completion.pdf",
+        href: "/certificates/amos_Unstacked_Labs_BwAI_Certificate.pdf",
         icon: "fas fa-robot"
     }
 ];
@@ -149,17 +149,17 @@ export const services = [
         icon: "fas fa-palette",
         label: "Creative"
     },
+		{
+				title: "E-Commerce Solutions",
+				description: "Developing robust online stores with secure gateways and inventory management.",
+				icon: "fas fa-lock",
+				label: "Secure"
+		},
     {
         title: "Business Websites",
         description: "Building professional portfolios and business websites tailored to your unique value.",
         icon: "fas fa-laptop-code",
         label: "Professional"
-    },
-    {
-        title: "E-Commerce Solutions",
-        description: "Developing robust online stores with secure gateways and inventory management.",
-        icon: "fas fa-lock",
-        label: "Secure"
     },
     {
         title: "Payment Integration",

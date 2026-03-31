@@ -4,8 +4,7 @@
 	import CertCard from '$lib/components/CertCard.svelte';
 	import SkillShowcase from '$lib/components/SkillShowcase.svelte';
 	import ProjectCard from '$lib/components/ProjectCard.svelte';
-	import CardSwap from '$lib/components/CardSwap.svelte';
-	import SwapCard from '$lib/components/SwapCard.svelte';
+	import ServicesAccordion from '$lib/components/ServicesAccordion.svelte';
 
 	onMount(() => {
 		const observer = new IntersectionObserver(
@@ -58,22 +57,8 @@
 <section id="services" class="reveal">
 	<h1>Services.</h1>
 	<div class="services-grid-container">
-		<p class="services-description">
-			I offer specialized services to bring your digital vision to life—from architecture to final
-			polish, with a focus on performance and user experience.
-		</p>
-
 		<div class="services-visual">
-			<CardSwap cardDistance={40} verticalDistance={40} delay={3000} width={800} height={280}>
-				{#each services as service}
-					<SwapCard>
-						{#snippet icon()}<i class={service.icon}></i>{/snippet}
-						{#snippet label()}{service.label}{/snippet}
-						<h3>{service.title}</h3>
-						<p>{service.description}</p>
-					</SwapCard>
-				{/each}
-			</CardSwap>
+			<ServicesAccordion {services} />
 		</div>
 	</div>
 </section>
@@ -144,25 +129,15 @@
 		min-height: auto;
 	}
 
-	.services-description {
-		font-size: 1.1rem;
-		line-height: 1.6;
-		color: #888;
-		max-width: 800px;
-		margin: 0;
-	}
-
 	.services-visual {
 		width: 100%;
 		display: flex;
 		justify-content: center;
-		align-items: center;
-		position: relative;
-		margin-top: 9rem;
+		margin-top: 1.5rem;
 	}
 
 	#services {
-		margin-bottom: 2vh;
+		margin-bottom: 6vh;
 	}
 
 	@media (max-width: 1100px) {
@@ -171,7 +146,7 @@
 
 	@media (max-width: 800px) {
 		.services-visual {
-			margin-top: 7rem;
+			margin-top: 1rem;
 		}
 	}
 
