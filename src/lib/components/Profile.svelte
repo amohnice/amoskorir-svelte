@@ -37,17 +37,55 @@
 		mediaQuery.addEventListener('change', handler);
 		return () => mediaQuery.removeEventListener('change', handler);
 	});
+
+	// Tilt effect state
+	let rotateX = $state(0);
+	let rotateY = $state(0);
+	let isHovered = $state(false);
+
+	function handleMouseMove(e: MouseEvent) {
+		const target = e.currentTarget as HTMLElement;
+		const rect = target.getBoundingClientRect();
+		const x = e.clientX - rect.left;
+		const y = e.clientY - rect.top;
+		const centerX = rect.width / 2;
+		const centerY = rect.height / 2;
+
+		rotateX = (centerY - y) / 5;
+		rotateY = (x - centerX) / 5;
+	}
+
+	function handleMouseLeave() {
+		isHovered = false;
+		rotateX = 0;
+		rotateY = 0;
+	}
 </script>
 
 <div id="profile">
 	<button id="theme-toggle" onclick={toggleTheme} title="Toggle Theme" aria-label="Toggle Theme">
 		<i class={theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'}></i>
 	</button>
-	<div class="profile-img-container">
+	<div class="profile-header">
 		<div
-			id="profile_img"
-			style="background: url({profileImg}) center; background-size: cover;"
-		></div>
+			class="profile-img-container"
+			role="img"
+			aria-label="Profile photo of Amos Korir with interactive 3D tilt effect"
+			onmouseenter={() => (isHovered = true)}
+			onmousemove={handleMouseMove}
+			onmouseleave={handleMouseLeave}
+			style="transform: rotateX({rotateX}deg) rotateY({rotateY}deg) scale({isHovered ? 1.05 : 1});"
+		>
+			<div
+				id="profile_img"
+				style="background: url({profileImg}) center; background-size: cover;"
+			></div>
+		</div>
+
+		<div class="status-badge">
+			<span class="status-dot"></span>
+			<span class="status-text">Available</span>
+		</div>
 	</div>
 	<div id="username">
 		<span style="display: flex; align-items: center; justify-content: flex-start; gap: 0.4rem;">
@@ -58,18 +96,20 @@
 		<p><b>Full-Stack Web Developer</b></p>
 		<p>
 			I build <RotatingText
-				texts={['robust', 'scalable', 'beautiful', 'modern', 'user-centered']}
+			texts={['responsive', 'interactive', 'scalable', 'modern', 'beautiful']}
 			/> web applications.
 		</p>
 		<p>
-			I'm proficient in JavaScript, TypeScript, and Python, with hands-on experience in MySQL,
-			PostgreSQL, and MongoDB.
+			Whether you need a stunning website, or a powerful web app,
+			I'm here to bring your ideas to life with clean code and creative design.
 		</p>
-		<p>
-			Currently, I am a freelance developer, delivering modern web solutions for clients and
-			collaborators.
-		</p>
-		<p>I’m open to work, connections, collaborations, and new opportunities.</p>
+
+		<div class="mini-stack">
+			<span class="skill-pill">JavaScript</span>
+			<span class="skill-pill">TypeScript</span>
+			<span class="skill-pill">React</span>
+			<span class="skill-pill">Next.js</span>
+		</div>
 	</div>
 	<div id="socials">
 		<div class="socials">
@@ -119,29 +159,43 @@
 		flex-direction: column;
 		justify-content: center;
 		text-align: left;
-		background: var(--card-bg);
-		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
+		background: rgba(var(--profile-bg-rgb, 20, 20, 20), 0.03);
+		backdrop-filter: blur(40px);
+		-webkit-backdrop-filter: blur(40px);
 		border-right: 1px solid var(--glass-border);
+		/* High-end edge light effect */
+		border-top: 1px solid rgba(255, 255, 255, 0.05);
 		position: fixed;
 		color: var(--text-color) !important;
 		transition: all 0.3s ease;
 		z-index: 10;
 		overflow-y: auto;
 		box-sizing: border-box;
+		box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
+	}
+
+	.profile-header {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+		margin-bottom: 2vh;
+		perspective: 1000px;
 	}
 
 	.profile-img-container {
 		position: relative;
 		width: 124px;
 		height: 124px;
-		margin-bottom: 2vh;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
 		border-radius: 22px;
 		background: var(--glass-border);
+		transform-style: preserve-3d;
+		transition: transform 0.1s ease-out;
+		cursor: crosshair;
 	}
 
 	.profile-img-container::before {
@@ -183,9 +237,9 @@
 	}
 
 	#username {
-		font-size: 18px;
+		font-size: 20px;
 		font-weight: bold;
-		margin: 1vh 0;
+		margin: 1.5vh 0;
 	}
 
 	#username b {
@@ -193,23 +247,93 @@
 	}
 
 	#username span {
-		font-size: 24px;
+		font-size: 32px;
+		line-height: 1.2;
 	}
 
 	#about {
-		font-size: 0.9rem;
+		font-size: 1.05rem;
 		font-weight: 400;
-		line-height: 1.5;
+		line-height: 1.6;
 		word-wrap: break-word;
 		color: var(--text-color) !important;
 	}
 
 	#about p {
-		margin: 1vh 0;
+		margin: 1.5vh 0;
 	}
 
 	#about b {
 		color: var(--accent-color) !important;
+	}
+
+	.status-badge {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 4px 12px;
+		background: rgba(34, 197, 94, 0.1);
+		border: 1px solid rgba(34, 197, 94, 0.2);
+		border-radius: 20px;
+		transition: all 0.3s ease;
+	}
+
+	.status-dot {
+		width: 8px;
+		height: 8px;
+		background: #22c55e;
+		border-radius: 50%;
+		box-shadow: 0 0 8px #22c55e;
+		animation: pulse 2s infinite;
+	}
+
+	@keyframes pulse {
+		0% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+		}
+		70% {
+			transform: scale(1);
+			box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+		}
+		100% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+		}
+	}
+
+	.status-text {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #22c55e;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+	}
+
+	.mini-stack {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 1.5rem;
+	}
+
+	.skill-pill {
+		font-size: 0.7rem;
+		padding: 4px 12px;
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid var(--glass-border);
+		border-radius: 12px;
+		color: var(--text-color);
+		font-weight: 500;
+		opacity: 0.8;
+		transition: all 0.3s ease;
+	}
+
+	.skill-pill:hover {
+		border-color: var(--accent-color);
+		color: var(--accent-color);
+		opacity: 1;
+		transform: translateY(-2px);
 	}
 
 	.socials {
@@ -279,6 +403,17 @@
 			width: 40px;
 			height: 40px;
 			padding: 0;
+		}
+
+		#username span {
+			font-size: 26px;
+			white-space: nowrap;
+			display: block;
+			width: 100%;
+		}
+
+		#about {
+			font-size: 1.05rem;
 		}
 	}
 </style>
