@@ -78,7 +78,7 @@
 	.hamburger {
 		position: fixed;
 		top: 20px;
-		left: 20px;
+		right: 20px;
 		z-index: 2001;
 		cursor: pointer;
 		background: var(--card-bg, rgba(26, 26, 26, 0.8));
@@ -237,7 +237,7 @@
 	@media (max-width: 800px) {
 		.hamburger {
 			top: 15px;
-			left: 15px;
+			right: 15px;
 			width: 40px;
 			height: 40px;
 		}

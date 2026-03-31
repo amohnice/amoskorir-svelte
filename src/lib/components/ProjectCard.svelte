@@ -112,7 +112,7 @@
 		flex-direction: column;
 		justify-content: flex-end;
 		padding: 30px;
-		background: rgba(20, 20, 20, 0.4);
+		background: var(--card-bg);
 		border: 1px solid var(--glass-border);
 		border-radius: 20px;
 		overflow: hidden;
@@ -147,7 +147,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.9) 80%);
+		background: linear-gradient(to bottom, transparent 0%, var(--bg-color) 85%);
 	}
 
 	.project-link:hover .card-bg img {
@@ -169,12 +169,11 @@
 		justify-content: space-between;
 		align-items: center;
 		color: var(--accent-color);
-		text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 	}
 
 	.alignright {
 		font-size: 1.2rem;
-		color: #fff;
+		color: var(--text-color);
 		transition: transform 0.3s ease;
 	}
 
@@ -184,7 +183,8 @@
 
 	.about_section p {
 		font-size: 0.95rem;
-		color: #ccc;
+		color: var(--text-color);
+		opacity: 0.8;
 		line-height: 1.5;
 		margin: 0;
 		display: -webkit-box;
@@ -204,10 +204,10 @@
 	.tech-tag {
 		font-size: 0.7rem;
 		padding: 4px 10px;
-		background: rgba(255, 255, 255, 0.1);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: var(--card-bg);
+		border: 1px solid var(--glass-border);
 		border-radius: 12px;
-		color: #eee;
+		color: var(--text-color);
 		backdrop-filter: blur(5px);
 		font-weight: 600;
 		letter-spacing: 0.5px;
@@ -219,7 +219,7 @@
 		left: -50%;
 		width: 200%;
 		height: 200%;
-		background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+		background: radial-gradient(circle, rgba(var(--profile-bg-rgb), 0.15) 0%, transparent 70%);
 		z-index: 5;
 		pointer-events: none;
 		transition: opacity 0.3s ease;

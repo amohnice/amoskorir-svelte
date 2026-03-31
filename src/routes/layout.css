@@ -6,16 +6,6 @@ html {
 }
 
 :root {
-    --bg-color: #fafafa;
-    --text-color: #111;
-    --blog-gray-color: rgb(80, 80, 80);
-    --background-background: #fafafa;
-    --card-bg: rgba(0, 0, 0, 0.02);
-    --glass-border: rgba(0, 0, 0, 0.08);
-    --accent-color: #22c55e;
-}
-
-:root[data-theme='dark'] {
     --bg-color: #000;
     --text-color: #fff;
     --blog-gray-color: #888;
@@ -23,6 +13,7 @@ html {
     --card-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
     --accent-color: #22c55e;
+    --profile-bg-rgb: 255, 255, 255;
 }
 
 body {

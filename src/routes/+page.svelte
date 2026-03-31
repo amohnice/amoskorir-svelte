@@ -233,6 +233,7 @@
 		flex-direction: column;
 		gap: 2px;
 		text-align: left;
+		min-width: 0; /* Critical for child overflow content truncation */
 	}
 
 	.contact-platform {
@@ -248,6 +249,9 @@
 		font-size: 1.05rem;
 		font-weight: 700;
 		color: var(--text-color);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	#footer {

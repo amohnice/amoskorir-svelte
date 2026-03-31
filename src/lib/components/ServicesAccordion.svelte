@@ -102,7 +102,7 @@
 		min-width: 65px; /* Critically ensures collapsed cards don't squish */
 		position: relative;
 		border-radius: 16px; /* Slightly softer radius for thin columns */
-		background: rgba(20, 20, 20, 0.4);
+		background: var(--card-bg);
 		border: 1px solid var(--glass-border);
 		backdrop-filter: blur(12px);
 		-webkit-backdrop-filter: blur(12px);
@@ -119,15 +119,15 @@
 	}
 
 	.accordion-item:hover {
-		background: rgba(30, 30, 30, 0.6);
+		background: rgba(var(--profile-bg-rgb), 0.1);
 	}
 
 	.accordion-item.active {
-		flex: 10; /* Grab all remaining space after min-widths are satisfied */
-		min-width: 320px; /* Ensure main card is always readable */
-		background: rgba(20, 25, 20, 0.8);
-		border-color: rgba(0, 255, 153, 0.4);
-		box-shadow: 0 10px 40px rgba(0, 255, 153, 0.05);
+		flex: 10;
+		min-width: 320px;
+		background: var(--bg-color);
+		border-color: var(--accent-color);
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
 	}
 
 	/* Header logic (The icon and the rotated text strip) */
@@ -222,7 +222,7 @@
 
 	.text-block h3 {
 		font-size: 2rem;
-		color: #fff;
+		color: var(--text-color);
 		margin: 0 0 10px 0;
 		font-weight: 700;
 		line-height: 1.2;
@@ -230,7 +230,8 @@
 
 	.text-block p {
 		font-size: 1rem;
-		color: #bbb;
+		color: var(--text-color);
+		opacity: 0.8;
 		line-height: 1.6;
 		margin: 0;
 		max-width: 90%;
@@ -281,7 +282,7 @@
 			writing-mode: horizontal-tb;
 			transform: none;
 			font-size: 1.1rem;
-			color: #fff;
+			color: var(--text-color);
 			margin-left: 10px;
 		}
 
@@ -324,7 +325,8 @@
 		.text-block p {
 			max-width: 100%;
 			font-size: 0.95rem;
-			color: #aaa;
+			color: var(--text-color);
+			opacity: 0.7;
 		}
 	}
 </style>

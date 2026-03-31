@@ -4,38 +4,9 @@
 	import TrueFocus from './TrueFocus.svelte';
 	import RotatingText from './RotatingText.svelte';
 
-	const storageKey = 'amos-portfolio-theme';
-	let theme = $state('light');
-
-	function getTheme() {
-		if (typeof window === 'undefined') return 'light';
-		const savedTheme = localStorage.getItem(storageKey);
-		if (savedTheme) return savedTheme;
-		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-	}
-
-	function setTheme(newTheme: string) {
-		theme = newTheme;
-		document.documentElement.setAttribute('data-theme', theme);
-		localStorage.setItem(storageKey, theme);
-	}
-
-	function toggleTheme() {
-		setTheme(theme === 'dark' ? 'light' : 'dark');
-	}
-
 	onMount(() => {
-		setTheme(getTheme());
-
-		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		const handler = (e: MediaQueryListEvent) => {
-			if (!localStorage.getItem(storageKey)) {
-				setTheme(e.matches ? 'dark' : 'light');
-			}
-		};
-
-		mediaQuery.addEventListener('change', handler);
-		return () => mediaQuery.removeEventListener('change', handler);
+		// Dark mode is now the only mode. We clean up any older theme attributes.
+		document.documentElement.removeAttribute('data-theme');
 	});
 
 	// Tilt effect state
@@ -63,9 +34,6 @@
 </script>
 
 <div id="profile">
-	<button id="theme-toggle" onclick={toggleTheme} title="Toggle Theme" aria-label="Toggle Theme">
-		<i class={theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'}></i>
-	</button>
 	<div class="profile-header">
 		<div
 			class="profile-img-container"
@@ -356,30 +324,6 @@
 		color: var(--text-color) !important;
 	}
 
-	#theme-toggle {
-		position: absolute;
-		top: 20px;
-		right: 20px;
-		z-index: 1000;
-		cursor: pointer;
-		width: 44px;
-		height: 44px;
-		padding: 0;
-		border-radius: 50%;
-		background: color-mix(in srgb, var(--bg-color), var(--text-color) 3%);
-		border: 1px solid var(--glass-border);
-		color: var(--text-color);
-		transition: all 0.3s ease;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	#theme-toggle:hover {
-		transform: scale(1.1);
-		background: var(--glass-border);
-	}
-
 	@media (max-width: 800px) {
 		#profile {
 			width: 100%;
@@ -396,14 +340,6 @@
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
-		}
-
-		#theme-toggle {
-			top: 15px;
-			right: 15px;
-			width: 40px;
-			height: 40px;
-			padding: 0;
 		}
 
 		#username span {
