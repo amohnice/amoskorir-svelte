@@ -194,10 +194,10 @@ export const services = [
 ];
 
 export const contacts = [
-    { icon: "fas fa-phone", label: "+254 719 388 139", href: "tel:+254719388139" },
-    { icon: "fab fa-whatsapp", label: "+254 719 388 139", href: "https://wa.me/254719388139" },
-    { icon: "fas fa-envelope", label: "amoskorir631@gmail.com", href: "mailto:amoskorir631@gmail.com" },
-    { icon: "fab fa-github", label: "GitHub", href: "https://github.com/amohnice" },
-    { icon: "fab fa-linkedin", label: "LinkedIn", href: "https://linkedin.com/in/amos-korir" },
-    { icon: "fas fa-map-marker-alt", label: "Nairobi, Kenya", href: "#", isLocation: true }
+    { icon: "fas fa-phone", platform: "Phone Number", identifier: "+254 719 388 139", href: "tel:+254719388139" },
+    { icon: "fab fa-whatsapp", platform: "WhatsApp", identifier: "+254 719 388 139", href: "https://wa.me/254719388139" },
+    { icon: "fas fa-envelope", platform: "Email Address", identifier: "amoskorir631@gmail.com", href: "mailto:amoskorir631@gmail.com" },
+    { icon: "fab fa-github", platform: "GitHub", identifier: "amohnice", href: "https://github.com/amohnice" },
+    { icon: "fab fa-linkedin", platform: "LinkedIn", identifier: "amos-korir", href: "https://linkedin.com/in/amos-korir" },
+    { icon: "fas fa-map-marker-alt", platform: "Location", identifier: "Nairobi, Kenya", href: "#", isLocation: true }
 ];

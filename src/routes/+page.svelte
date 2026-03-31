@@ -75,8 +75,13 @@
 				target={contact.isLocation ? '_self' : '_blank'}
 				rel="noopener noreferrer"
 			>
-				<i class={contact.icon}></i>
-				<span>{contact.label}</span>
+				<div class="contact-icon-box">
+					<i class={contact.icon}></i>
+				</div>
+				<div class="contact-text">
+					<span class="contact-platform">{contact.platform}</span>
+					<span class="contact-identifier">{contact.identifier}</span>
+				</div>
 			</a>
 		{/each}
 	</div>
@@ -114,9 +119,10 @@
 
 	.projects {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 		gap: 30px;
-		margin-left: -15px;
+		margin-top: 20px;
+		width: 100%;
 	}
 
 	.services-grid-container {
@@ -189,27 +195,59 @@
 		-webkit-backdrop-filter: blur(5px);
 	}
 
-	.contact-item:hover:not(.location-item) {
+	.contact-item:hover {
 		transform: translateY(-3px) scale(1.02);
 		background: var(--glass-border);
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 		border-color: var(--accent-color);
 	}
 
-	.contact-item i {
-		font-size: 24px;
-		color: var(--accent-color);
-		transition: transform 0.3s ease;
+	.contact-icon-box {
+		width: 48px;
+		height: 48px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(34, 197, 94, 0.1);
+		border-radius: 12px;
+		flex-shrink: 0;
+		transition: all 0.3s ease;
 	}
 
-	.contact-item:hover i {
+	.contact-icon-box i {
+		font-size: 20px;
+		color: var(--accent-color);
+	}
+
+	.contact-item:hover .contact-icon-box {
+		background: var(--accent-color);
+	}
+
+	.contact-item:hover .contact-icon-box i {
+		color: var(--bg-color);
 		transform: scale(1.1) rotate(5deg);
 	}
 
-	.contact-item span {
-		font-size: 1rem;
-		font-weight: 500;
-		letter-spacing: 0.5px;
+	.contact-text {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		text-align: left;
+	}
+
+	.contact-platform {
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-weight: 600;
+		opacity: 0.6;
+		color: var(--text-color);
+	}
+
+	.contact-identifier {
+		font-size: 1.05rem;
+		font-weight: 700;
+		color: var(--text-color);
 	}
 
 	#footer {
