@@ -145,43 +145,51 @@ export const projects = [
 export const services = [
     {
         title: "Web Design & Branding",
-        description: "Crafting visually stunning, user-centric designs and cohesive branding assets that leave a lasting impression.",
-        icon: "fas fa-palette"
+        description: "Crafting visually stunning, user-centric designs and cohesive branding assets.",
+        icon: "fas fa-palette",
+        label: "Creative"
     },
     {
-        title: "Personal & Business Websites",
-        description: "Building professional portfolios and business websites tailored to showcase your unique value proposition.",
-        icon: "fas fa-laptop-code"
+        title: "Business Websites",
+        description: "Building professional portfolios and business websites tailored to your unique value.",
+        icon: "fas fa-laptop-code",
+        label: "Professional"
     },
     {
         title: "E-Commerce Solutions",
-        description: "Developing robust online stores with secure gateways, inventory management, and seamless functional checkout.",
-        icon: "fas fa-shopping-cart"
+        description: "Developing robust online stores with secure gateways and inventory management.",
+        icon: "fas fa-lock",
+        label: "Secure"
     },
     {
         title: "Payment Integration",
-        description: "Integrating secure payment gateways like M-Pesa, Stripe, and PayPal for smooth financial transactions.",
-        icon: "fas fa-money-bill-wave"
+        description: "Integrating secure gateways like M-Pesa, Stripe, and PayPal for smooth transactions.",
+        icon: "fas fa-bolt",
+        label: "Fast"
     },
     {
         title: "POS & Inventory",
-        description: "Custom Point of Sale and inventory systems to streamline operations and track stock in real-time.",
-        icon: "fas fa-cash-register"
+        description: "Custom Point of Sale and inventory systems to streamline operations in real-time.",
+        icon: "fas fa-cash-register",
+        label: "Efficient"
     },
     {
         title: "AI Integration",
-        description: "Leveraging Artificial Intelligence to automate tasks, analyze data, and enhance user interactions.",
-        icon: "fas fa-brain"
+        description: "Leveraging Artificial Intelligence to automate tasks and enhance user interactions.",
+        icon: "fas fa-brain",
+        label: "Smart"
     },
     {
         title: "PWA Support",
-        description: "Building Progressive Web Apps that offer a native app-like experience directly within the web browser.",
-        icon: "fas fa-mobile-alt"
+        description: "Building Progressive Web Apps that offer a native app-like experience on the web.",
+        icon: "fas fa-rocket",
+        label: "Modern"
     },
     {
         title: "Custom Solutions",
-        description: "Tailor-made software solutions designed to address specific business challenges and requirements.",
-        icon: "fas fa-cogs"
+        description: "Tailor-made software solutions designed to address specific business challenges.",
+        icon: "fas fa-cogs",
+        label: "Tailored"
     }
 ];
 

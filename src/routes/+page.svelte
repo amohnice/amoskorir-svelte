@@ -65,58 +65,14 @@
 
 		<div class="services-visual">
 			<CardSwap cardDistance={40} verticalDistance={40} delay={3000} width={800} height={280}>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-palette"></i>{/snippet}
-					{#snippet label()}Creative{/snippet}
-					<h3>Web Design & Branding</h3>
-					<p>Crafting visually stunning, user-centric designs and cohesive branding assets.</p>
-				</SwapCard>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-laptop-code"></i>{/snippet}
-					{#snippet label()}Professional{/snippet}
-					<h3>Business Websites</h3>
-					<p>
-						Building professional portfolios and business websites tailored to your unique value.
-					</p>
-				</SwapCard>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-lock"></i>{/snippet}
-					{#snippet label()}Secure{/snippet}
-					<h3>E-Commerce Solutions</h3>
-					<p>Developing robust online stores with secure gateways and inventory management.</p>
-				</SwapCard>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-bolt"></i>{/snippet}
-					{#snippet label()}Fast{/snippet}
-					<h3>Payment Integration</h3>
-					<p>
-						Integrating secure gateways like M-Pesa, Stripe, and PayPal for smooth transactions.
-					</p>
-				</SwapCard>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-cash-register"></i>{/snippet}
-					{#snippet label()}Efficient{/snippet}
-					<h3>POS & Inventory</h3>
-					<p>Custom Point of Sale and inventory systems to streamline operations in real-time.</p>
-				</SwapCard>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-brain"></i>{/snippet}
-					{#snippet label()}Smart{/snippet}
-					<h3>AI Integration</h3>
-					<p>Leveraging Artificial Intelligence to automate tasks and enhance user interactions.</p>
-				</SwapCard>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-rocket"></i>{/snippet}
-					{#snippet label()}Modern{/snippet}
-					<h3>PWA Support</h3>
-					<p>Building Progressive Web Apps that offer a native app-like experience on the web.</p>
-				</SwapCard>
-				<SwapCard>
-					{#snippet icon()}<i class="fas fa-cogs"></i>{/snippet}
-					{#snippet label()}Tailored{/snippet}
-					<h3>Custom Solutions</h3>
-					<p>Tailor-made software solutions designed to address specific business challenges.</p>
-				</SwapCard>
+				{#each services as service}
+					<SwapCard>
+						{#snippet icon()}<i class={service.icon}></i>{/snippet}
+						{#snippet label()}{service.label}{/snippet}
+						<h3>{service.title}</h3>
+						<p>{service.description}</p>
+					</SwapCard>
+				{/each}
 			</CardSwap>
 		</div>
 	</div>
