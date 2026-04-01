@@ -1,6 +1,9 @@
 import { GoogleGenAI } from '@google/genai';
 import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
 const SYSTEM_PROMPT = `You are Amos Korir's professional digital assistant on his portfolio website. Your name is "Amos's AI Assistant." You are friendly, concise, and helpful. Speak in third person when referring to Amos (e.g., "Amos specializes in..." or "He has built...").
 
@@ -86,14 +89,17 @@ export const POST: RequestHandler = async ({ request }) => {
 		} else if (project) {
 			console.log(`[Vertex AI Chat] Initializing with Project: ${project}, Location: ${location}`);
 			
-			let authOptions: any = {};
 			if (serviceAccountJson) {
 				try {
-					authOptions = { credentials: JSON.parse(serviceAccountJson) };
+					// Vercel workaround: Write the JSON to a temporary file and set GOOGLE_APPLICATION_CREDENTIALS
+					const tempPath = path.join(os.tmpdir(), `google-creds-${Date.now()}.json`);
+					fs.writeFileSync(tempPath, serviceAccountJson);
+					process.env.GOOGLE_APPLICATION_CREDENTIALS = tempPath;
+					console.log(`[Vertex AI Chat] Wrote credentials to ${tempPath}`);
 				} catch (e: any) {
-					console.error('Failed to parse Service Account JSON:', e.message);
+					console.error('Failed to handle Service Account JSON:', e.message);
 					return new Response(JSON.stringify({ 
-						error: 'GOOGLE_SERVICE_ACCOUNT_JSON parsing failed', 
+						error: 'Service Account setup failed', 
 						details: e.message,
 						diagnostics 
 					}), {
@@ -106,8 +112,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			ai = new GoogleGenAI({
 				vertexai: true,
 				project: project,
-				location: location,
-				...authOptions
+				location: location
 			});
 		} else {
 			return new Response(
