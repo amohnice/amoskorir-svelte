@@ -60,40 +60,43 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const project = env.GOOGLE_CLOUD_PROJECT;
 	const location = env.GOOGLE_CLOUD_LOCATION || 'us-central1';
-
-	// Runtime diagnostics for debugging 404s
-	console.log(`[Vertex AI Chat] Initializing with Project: ${project}, Location: ${location}`);
-
-	if (!project) {
-		return new Response(
-			JSON.stringify({ error: 'Server configuration error: missing GOOGLE_CLOUD_PROJECT' }),
-			{ status: 500, headers: { 'Content-Type': 'application/json' } }
-		);
-	}
+	const apiKey = env.GOOGLE_API_KEY;
+	const serviceAccountJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
 
 	try {
-		// Create the correct class based on the official README
-		const serviceAccountJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
-		let authOptions: any = {};
-		if (serviceAccountJson) {
-			try {
-				authOptions = { credentials: JSON.parse(serviceAccountJson) };
-			} catch (e: any) {
-				console.error('Failed to parse Service Account JSON:', e.message);
-				return new Response(JSON.stringify({ error: `Server configuration error: GOOGLE_SERVICE_ACCOUNT_JSON parsing failed. ${e.message}` }), {
-					status: 500,
-					headers: { 'Content-Type': 'application/json' }
-				});
-			}
-		}
+		let ai: GoogleGenAI;
 
-		// Initialize with the correct structure: credentials/options are top-level or handled by SDK discover
-		const ai = new GoogleGenAI({
-			vertexai: true,
-			project: project,
-			location: location,
-			...authOptions
-		});
+		if (apiKey) {
+			console.log(`[Google AI Chat] Initializing with API Key`);
+			ai = new GoogleGenAI({ apiKey });
+		} else if (project) {
+			console.log(`[Vertex AI Chat] Initializing with Project: ${project}, Location: ${location}`);
+			
+			let authOptions: any = {};
+			if (serviceAccountJson) {
+				try {
+					authOptions = { credentials: JSON.parse(serviceAccountJson) };
+				} catch (e: any) {
+					console.error('Failed to parse Service Account JSON:', e.message);
+					return new Response(JSON.stringify({ error: `Server configuration error: GOOGLE_SERVICE_ACCOUNT_JSON parsing failed. ${e.message}` }), {
+						status: 500,
+						headers: { 'Content-Type': 'application/json' }
+					});
+				}
+			}
+
+			ai = new GoogleGenAI({
+				vertexai: true,
+				project: project,
+				location: location,
+				...authOptions
+			});
+		} else {
+			return new Response(
+				JSON.stringify({ error: 'Server configuration error: missing GOOGLE_API_KEY or GOOGLE_CLOUD_PROJECT' }),
+				{ status: 500, headers: { 'Content-Type': 'application/json' } }
+			);
+		}
 
 		// Build conversation history as documented for @google/genai
 		const allContents = messages.slice(0, -1).map((msg: { role: string; content: string }) => ({
@@ -111,7 +114,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		];
 
 		const response = await ai.models.generateContentStream({
-			model: 'gemini-2.5-flash',
+			model: apiKey ? 'gemini-2.0-flash' : 'gemini-1.5-flash',
 			contents,
 			config: {
 				systemInstruction: SYSTEM_PROMPT,
