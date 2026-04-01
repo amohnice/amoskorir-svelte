@@ -74,12 +74,25 @@ export const POST: RequestHandler = async ({ request }) => {
 	try {
 		// Create the correct class based on the official README
 		const serviceAccountJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
+		let authOptions: any = {};
+		if (serviceAccountJson) {
+			try {
+				authOptions = { credentials: JSON.parse(serviceAccountJson) };
+			} catch (e: any) {
+				console.error('Failed to parse Service Account JSON:', e.message);
+				return new Response(JSON.stringify({ error: `Server configuration error: GOOGLE_SERVICE_ACCOUNT_JSON parsing failed. ${e.message}` }), {
+					status: 500,
+					headers: { 'Content-Type': 'application/json' }
+				});
+			}
+		}
 
+		// Initialize with the correct structure: credentials/options are top-level or handled by SDK discover
 		const ai = new GoogleGenAI({
 			vertexai: true,
 			project: project,
 			location: location,
-			...(serviceAccountJson ? { auth: { credentials: JSON.parse(serviceAccountJson) } } : {})
+			...authOptions
 		});
 
 		// Build conversation history as documented for @google/genai
@@ -118,6 +131,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					}
 					controller.close();
 				} catch (err) {
+					console.error('Streaming Chunk Error:', err);
 					controller.error(err);
 				}
 			}
@@ -133,24 +147,43 @@ export const POST: RequestHandler = async ({ request }) => {
 	} catch (err: any) {
 		console.error('Final Google Gen AI Error:', err);
 		const message = err.message || 'Unknown error';
+		const status = err.status || 500;
 
-		// Handle specific 404 (model not found) which usually means a retired model ID or project misconfig
+		// Help identify if it's a model-existence issue
 		if (message.includes('404')) {
-			console.warn('Vertex AI Model Error (404): Check if the model ID exists in your region/project.');
-			return new Response(JSON.stringify({ error: "One moment while I connect to the updated AI service... ⏳ (Model 404)" }), {
+			console.warn('Vertex AI Model Error (404): Try falling back to gemini-2.0-flash or gemini-1.5-flash.');
+			return new Response(JSON.stringify({ 
+				error: "Model not found. Please try a different Gemini model ID (e.g., gemini-2.0-flash).",
+				details: message
+			}), {
 				status: 500,
 				headers: { 'Content-Type': 'application/json' }
 			});
 		}
 
-		if (message.includes('429') || message.includes('quota') || message.includes('Too Many Requests')) {
+		if (message.includes('403') || message.includes('permission')) {
+			return new Response(JSON.stringify({ 
+				error: "Permission denied. Ensure your Service Account has 'Vertex AI User' permissions in Google Cloud.",
+				details: message
+			}), {
+				status: 403,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		}
+
+		if (message.includes('429') || message.includes('quota')) {
 			return new Response(
-				JSON.stringify({ error: "I'm getting a lot of questions right now! Please try again in a minute. 😊" }),
+				JSON.stringify({ error: "Quota exceeded. Please try again later.", details: message }),
 				{ status: 429, headers: { 'Content-Type': 'application/json' } }
 			);
 		}
 
-		return new Response(JSON.stringify({ error: `Something went wrong. You can reach Amos directly via WhatsApp (+254 719 388 139) or email (amoskorir631@gmail.com).` }), {
+		// Generic fallback during debugging
+		return new Response(JSON.stringify({ 
+			error: `Internal Server Error: ${message}`,
+			details: err.toString(),
+			stack: err.stack ? 'present' : 'absent'
+		}), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' }
 		});
