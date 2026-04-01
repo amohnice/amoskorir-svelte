@@ -58,10 +58,20 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 	}
 
-	const project = env.GOOGLE_CLOUD_PROJECT;
-	const location = env.GOOGLE_CLOUD_LOCATION || 'us-central1';
-	const apiKey = env.GOOGLE_API_KEY;
-	const serviceAccountJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
+	// Discovery logic for credentials
+	const getEnv = (name: string) => env[name] || (typeof process !== 'undefined' ? process.env[name] : undefined);
+	
+	const apiKey = getEnv('GOOGLE_API_KEY') || getEnv('GEMINI_API_KEY') || getEnv('API_KEY');
+	const project = getEnv('GOOGLE_CLOUD_PROJECT') || getEnv('GCP_PROJECT');
+	const location = getEnv('GOOGLE_CLOUD_LOCATION') || 'us-central1';
+	const serviceAccountJson = getEnv('GOOGLE_SERVICE_ACCOUNT_JSON');
+
+	const diagnostics = {
+		hasApiKey: !!apiKey,
+		hasProject: !!project,
+		hasServiceAccount: !!serviceAccountJson,
+		nodeEnv: typeof process !== 'undefined' ? process.env.NODE_ENV : 'unknown'
+	};
 
 	try {
 		let ai: GoogleGenAI;
@@ -78,7 +88,11 @@ export const POST: RequestHandler = async ({ request }) => {
 					authOptions = { credentials: JSON.parse(serviceAccountJson) };
 				} catch (e: any) {
 					console.error('Failed to parse Service Account JSON:', e.message);
-					return new Response(JSON.stringify({ error: `Server configuration error: GOOGLE_SERVICE_ACCOUNT_JSON parsing failed. ${e.message}` }), {
+					return new Response(JSON.stringify({ 
+						error: 'GOOGLE_SERVICE_ACCOUNT_JSON parsing failed', 
+						details: e.message,
+						diagnostics 
+					}), {
 						status: 500,
 						headers: { 'Content-Type': 'application/json' }
 					});
@@ -93,7 +107,10 @@ export const POST: RequestHandler = async ({ request }) => {
 			});
 		} else {
 			return new Response(
-				JSON.stringify({ error: 'Server configuration error: missing GOOGLE_API_KEY or GOOGLE_CLOUD_PROJECT' }),
+				JSON.stringify({ 
+					error: 'Missing credentials. Set GOOGLE_API_KEY or GOOGLE_CLOUD_PROJECT.',
+					diagnostics 
+				}),
 				{ status: 500, headers: { 'Content-Type': 'application/json' } }
 			);
 		}
@@ -185,7 +202,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		return new Response(JSON.stringify({ 
 			error: `Internal Server Error: ${message}`,
 			details: err.toString(),
-			stack: err.stack ? 'present' : 'absent'
+			stack: err.stack ? 'present' : 'absent',
+			diagnostics
 		}), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' }
