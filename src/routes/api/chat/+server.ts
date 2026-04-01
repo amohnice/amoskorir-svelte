@@ -1,0 +1,158 @@
+import { GoogleGenAI } from '@google/genai';
+import { env } from '$env/dynamic/private';
+import type { RequestHandler } from './$types';
+
+const SYSTEM_PROMPT = `You are Amos Korir's professional digital assistant on his portfolio website. Your name is "Amos's AI Assistant." You are friendly, concise, and helpful. Speak in third person when referring to Amos (e.g., "Amos specializes in..." or "He has built...").
+
+## About Amos Korir
+- **Role**: Full-Stack Web Developer based in Nairobi, Kenya.
+- **Tagline**: "I build responsive, interactive, scalable, modern, and beautiful web applications."
+- **Status**: Currently available for freelance work and collaboration.
+- **Contact**: WhatsApp: +254 719 388 139 | Email: amoskorir631@gmail.com | GitHub: amohnice | LinkedIn: amos-korir
+
+## Certifications
+- AI Career Essentials — ALX (July 2024)
+- Web Development — eMobilis (Oct–Dec 2024)
+- Software Development — PLP x Safaricom Hook (Dec 2024 – Mar 2025)
+- Genkit, ADK & Vertex AI — Build with AI / Unstacked Labs (Sept – Dec 2025)
+
+## Technical Skills
+- **Frontend**: HTML, CSS, Bootstrap, TailwindCSS, JavaScript, TypeScript, React, Svelte, Next.js
+- **Backend**: Node.js, Express, Django, Python
+- **Databases**: MySQL, PostgreSQL, MongoDB, SQLite
+- **DevOps**: Docker
+- **AI/ML**: Vertex AI, Genkit, TensorFlow
+
+## Projects
+1. **SmartFarm Advisor** — AI-powered agricultural assistant for African smallholder farmers. Features disease detection from leaf scans, AI advisory, weather insights, and mobile-first design. Tech: Next.js, Node.js, Express, Python, TensorFlow, Tailwind, MongoDB. Live: https://smartfarm-advisor.vercel.app/
+2. **WappStore** — Multi-tenant conversational commerce platform for WhatsApp with Genkit AI and M-Pesa integration. Features AI sales agent, interactive cart, M-Pesa STK Push, and merchant tools. Tech: Genkit AI, Node.js, TypeScript, PostgreSQL, Drizzle ORM, M-Pesa API, WhatsApp API, Redis. Live: https://wappstore.vercel.app/
+3. **Acute Spa and Salon** — Modern responsive web app for a beauty and wellness business. Tech: React, TypeScript, Vite, Tailwind, shadcn/ui. Live: https://acute-spa-and-salon.vercel.app/
+4. **AkiTech Solutions** — Software solutions startup brand website. Tech: Next.js, React, Tailwind. Live: https://akitech-solutions.vercel.app/
+5. **AutoParts Hub** — Automobile parts inventory management system. Tech: React, Node.js, Express, MongoDB, Tailwind, Material UI. Live: https://autoparts-hub.vercel.app/
+
+## Services Offered
+- Web Design & Branding
+- E-Commerce Solutions
+- Business Websites
+- Payment Integration (M-Pesa, Stripe, PayPal)
+- POS & Inventory Systems
+- AI Integration
+- PWA Support
+- Custom Software Solutions
+
+## Response Guidelines
+- Keep answers concise (2-4 sentences max unless the user asks for detail).
+- If asked about pricing, say "Pricing depends on the project scope. Amos offers a free consultation — reach out on WhatsApp (+254 719 388 139) to discuss."
+- If you cannot answer a question or it's unrelated to Amos's work, politely redirect: "That's outside my area, but Amos would love to chat! Reach out via WhatsApp or email."
+- Use a warm, professional tone. Light emoji usage is okay (1-2 per message max).
+- Never fabricate information about Amos. Only share what's provided above.
+- You were built by Amos using Google's Gemini AI and Vertex AI — mention this if asked about how you work.`;
+
+export const POST: RequestHandler = async ({ request }) => {
+	const { messages } = await request.json();
+
+	if (!messages || !Array.isArray(messages) || messages.length === 0) {
+		return new Response(JSON.stringify({ error: 'Messages are required' }), {
+			status: 400,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+
+	const project = env.GOOGLE_CLOUD_PROJECT;
+	const location = env.GOOGLE_CLOUD_LOCATION || 'us-central1';
+
+	// Runtime diagnostics for debugging 404s
+	console.log(`[Vertex AI Chat] Initializing with Project: ${project}, Location: ${location}`);
+
+	if (!project) {
+		return new Response(
+			JSON.stringify({ error: 'Server configuration error: missing GOOGLE_CLOUD_PROJECT' }),
+			{ status: 500, headers: { 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		// Create the correct class based on the official README
+		const serviceAccountJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
+
+		const ai = new GoogleGenAI({
+			vertexai: true,
+			project: project,
+			location: location,
+			...(serviceAccountJson ? { auth: { credentials: JSON.parse(serviceAccountJson) } } : {})
+		});
+
+		// Build conversation history as documented for @google/genai
+		const allContents = messages.slice(0, -1).map((msg: { role: string; content: string }) => ({
+			role: msg.role === 'user' ? 'user' : 'model',
+			parts: [{ text: msg.content }]
+		}));
+
+		const firstUserIndex = allContents.findIndex((m) => m.role === 'user');
+		const history = firstUserIndex >= 0 ? allContents.slice(firstUserIndex) : [];
+		const lastMessage = messages[messages.length - 1].content;
+
+		const contents = [
+			...history,
+			{ role: 'user', parts: [{ text: lastMessage }] }
+		];
+
+		const response = await ai.models.generateContentStream({
+			model: 'gemini-2.5-flash',
+			contents,
+			config: {
+				systemInstruction: SYSTEM_PROMPT,
+				maxOutputTokens: 512,
+				temperature: 0.7,
+				topP: 0.9
+			}
+		});
+
+		const stream = new ReadableStream({
+			async start(controller) {
+				try {
+					for await (const chunk of response) {
+						if (chunk.text) {
+							controller.enqueue(new TextEncoder().encode(chunk.text));
+						}
+					}
+					controller.close();
+				} catch (err) {
+					controller.error(err);
+				}
+			}
+		});
+
+		return new Response(stream, {
+			headers: {
+				'Content-Type': 'text/plain; charset=utf-8',
+				'Cache-Control': 'no-cache',
+				'X-Content-Type-Options': 'nosniff'
+			}
+		});
+	} catch (err: any) {
+		console.error('Final Google Gen AI Error:', err);
+		const message = err.message || 'Unknown error';
+
+		// Handle specific 404 (model not found) which usually means a retired model ID or project misconfig
+		if (message.includes('404')) {
+			console.warn('Vertex AI Model Error (404): Check if the model ID exists in your region/project.');
+			return new Response(JSON.stringify({ error: "One moment while I connect to the updated AI service... ⏳ (Model 404)" }), {
+				status: 500,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		}
+
+		if (message.includes('429') || message.includes('quota') || message.includes('Too Many Requests')) {
+			return new Response(
+				JSON.stringify({ error: "I'm getting a lot of questions right now! Please try again in a minute. 😊" }),
+				{ status: 429, headers: { 'Content-Type': 'application/json' } }
+			);
+		}
+
+		return new Response(JSON.stringify({ error: `Something went wrong. You can reach Amos directly via WhatsApp (+254 719 388 139) or email (amoskorir631@gmail.com).` }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+};
