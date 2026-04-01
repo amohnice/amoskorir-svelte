@@ -150,6 +150,7 @@
 			return status === gl.FRAMEBUFFER_COMPLETE;
 		}
 
+		// svelte-ignore perf_avoid_nested_class
 		class Material {
 			constructor(vertexShader, fragmentShaderSource) {
 				this.vertexShader = vertexShader;
@@ -180,6 +181,7 @@
 			}
 		}
 
+		// svelte-ignore perf_avoid_nested_class
 		class Program {
 			constructor(vertexShader, fragmentShader) {
 				this.uniforms = {};

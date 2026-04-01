@@ -79,6 +79,7 @@
 
 <span class="true-focus-container">
 	{#each words as word, i}
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<span
 			bind:this={wordRefs[i]}
 			class="word"
