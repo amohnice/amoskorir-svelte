@@ -140,7 +140,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		];
 
 		const response = await ai.models.generateContentStream({
-			model: apiKey ? 'gemini-2.0-flash' : 'gemini-1.5-flash',
+			model: apiKey ? 'gemini-2.0-flash' : 'gemini-1.5-flash-002',
 			contents,
 			config: {
 				systemInstruction: SYSTEM_PROMPT,
