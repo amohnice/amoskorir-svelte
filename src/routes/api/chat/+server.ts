@@ -70,7 +70,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		hasApiKey: !!apiKey,
 		hasProject: !!project,
 		hasServiceAccount: !!serviceAccountJson,
-		nodeEnv: typeof process !== 'undefined' ? process.env.NODE_ENV : 'unknown'
+		nodeEnv: typeof process !== 'undefined' ? process.env.NODE_ENV : 'unknown',
+		availableKeys: [
+			...Object.keys(env),
+			...(typeof process !== 'undefined' ? Object.keys(process.env) : [])
+		].filter(key => key.includes('API') || key.includes('GOOGLE') || key.includes('GEMINI') || key.includes('PROJECT'))
 	};
 
 	try {
